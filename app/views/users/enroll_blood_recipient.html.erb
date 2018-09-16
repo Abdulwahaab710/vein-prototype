@@ -1,0 +1,18 @@
+<div class="col-md-6 col-md-offset-3">
+  <div class="row">
+    <% provide(:title, 'Sign up') %>
+    <h1>Blood Donation</h1>
+  </div>
+
+  <div class="row">
+      <%= form_for(@blood_donation_request, url: enroll_blood_recipient_path) do |f| %>
+        <%= render 'shared/error_messages', obj: @blood_donation_request %>
+
+        <%= f.label :amount %>
+        <%= f.number_field :amount, class: 'form-control', required: true %>
+        <p>Note that a pint is 450 ml</p>
+
+        <%= f.submit "Create my account", class: "btn btn-danger" %>
+      <% end %>
+  </div>
+</div>

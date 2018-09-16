@@ -77,3 +77,25 @@ blood_compatiblity.keys.each do |blood_type|
     BloodCompatibility.find_or_create_by!(donator_id: donator.id, receiver_id: receiver_blood_type.id)
   end
 end
+
+def blood_types
+  BloodType.all
+end
+
+def generate_fake_data
+  100.times do
+    rand_boolean = [true, false].sample
+    User.create(
+      name: Faker::Name.unique.name,
+      phone: Faker::PhoneNumber.phone_number,
+      password: 'password',
+      password_confirmation: 'password',
+      address: Faker::Address.street_address,
+      city: Faker::Address.city,
+      country: Faker::Address.country,
+      blood_type: blood_types.sample,
+      is_donar: rand_boolean,
+      is_recipient: !rand_boolean
+    )
+  end
+end
