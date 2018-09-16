@@ -35,14 +35,23 @@ class UsersController < ApplicationController
   end
 
   def register_as_a_donar
-    current_user.update(is_donor: true, is_recipient: false)
-    FindRecipientOrDonarJob.perform_later(current_user, find_recipient: true)
+    if current_user.is_donor
+      flash[:success] = 'You have successfully opt-out'
+      current_user.update!(is_donor: false, is_recipient: false)
+    else
+      flash[:success] = 'You have successfully opt-in'
+      current_user.update!(is_donor: true, is_recipient: false)
+    end
+    FindRecipientOrDonarJob.perform_later(current_user, f_recipient: true)
+    redirect_to action: :status
   end
 
   def register_as_a_blood_recipient
     BloodDonationRequest.create!(user: current_user, amount: params[:blood_donation_request][:amount])
-    current_user.update(is_donor: false, is_recipient: true)
-    FindRecipientOrDonarJob.perform_later(current_user, f_donor: true)
+    current_user.update!(is_donor: false, is_recipient: true)
+    FindRecipientOrDonarJob.perform_later(current_user, f_donor: true, amount: params[:blood_donation_request][:amount])
+    flash[:success] = 'Your request has been register'
+    redirect_to root_path
   end
 
   def enroll_blood_recipient

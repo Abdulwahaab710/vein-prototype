@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class DonationQueue < ApplicationRecord
-  belongs_to :user
+  belongs_to :user, optional: true
   before_create { generate_token }
 
   private

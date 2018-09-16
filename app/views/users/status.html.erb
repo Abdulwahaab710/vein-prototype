@@ -5,7 +5,11 @@
   </div>
   <div class='body' style='text-align: center;'>
     <div class="row">
-      <%= link_to 'Opt-in to be a donor', donor_opt_in_path, method: :patch, class: 'btn btn-danger' %>
+      <% if current_user.is_donor %>
+        <%= link_to 'Opt-out to be a donor', donor_opt_in_path, method: :patch, class: 'btn btn-danger' %>
+      <% else %>
+        <%= link_to 'Opt-in to be a donor', donor_opt_in_path, method: :patch, class: 'btn btn-danger' %>
+      <% end %>
     </div>
     <br>
     <div class="row">
