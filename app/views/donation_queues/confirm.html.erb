@@ -1,0 +1,15 @@
+<div class="col-md-6 col-md-offset-3">
+  <div class="row" style='text-align: center;'>
+    <% provide(:title, 'Sign up') %>
+    <h1>Confirm</h1>
+  </div>
+  <div class='body' style='text-align: center;'>
+    <div class="row">
+      <%= link_to 'I am available to donate', available_path, method: :patch, class: 'btn btn-danger' %>
+    </div>
+    <br>
+    <div class="row">
+      <%= link_to 'Sorry, I am not available to donate', unavailable_path, method: :delete, class: 'btn btn-danger' %>
+    </div>
+  </div>
+</div>
