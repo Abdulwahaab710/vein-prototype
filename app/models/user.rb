@@ -3,8 +3,9 @@
 class User < ApplicationRecord
   before_save { email.downcase! if email.present? }
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
-  validates :name, :address, :city, :country, :blood_type, presence: true
+  validates :name, :address, :city, :country, :blood_type, presence: true, on: :update
   validates :phone,
+            format: { with: /\A(\d+)\z/i },
             presence: true,
             uniqueness: true,
             unless: ->(user) { user.email.present? }
@@ -14,8 +15,6 @@ class User < ApplicationRecord
             format: { with: VALID_EMAIL_REGEX },
             uniqueness: { case_sensitive: false },
             unless: ->(user) { user.phone.present? }
-  validates :phone,
-            format: { with: /\A(\d+)\z/i }
   validates :password,
             presence: true,
             on: :create
@@ -30,7 +29,7 @@ class User < ApplicationRecord
   validate :user_is_donor_or_recipient?
 
   has_secure_password
-  belongs_to :blood_type
+  belongs_to :blood_type, optional: true
 
   private
 
