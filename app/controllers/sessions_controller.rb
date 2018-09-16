@@ -12,10 +12,10 @@ class SessionsController < ApplicationController
 
   def create
     user = find_user
-    if user&.authenticate(params[:session][:password])
+    if !!user&.authenticate(params[:session][:password])
       log_in user
       return redirect_to_complete_your_profile if user.blood_type.nil?
-      redirect_back_or user
+      redirect_back_or root_path
     else
       flash.now[:danger] = 'Invalid email or phone/password combination'
       render 'new', status: :unauthorized

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_16_130759) do
+ActiveRecord::Schema.define(version: 2018_09_16_131507) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,11 +52,13 @@ ActiveRecord::Schema.define(version: 2018_09_16_130759) do
   end
 
   create_table "donation_queues", force: :cascade do |t|
-    t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "token"
-    t.index ["user_id"], name: "index_donation_queues_on_user_id"
+    t.bigint "donor_id"
+    t.bigint "recipient_id"
+    t.index ["donor_id"], name: "index_donation_queues_on_donor_id"
+    t.index ["recipient_id"], name: "index_donation_queues_on_recipient_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -91,7 +93,8 @@ ActiveRecord::Schema.define(version: 2018_09_16_130759) do
   add_foreign_key "blood_donation_requests", "users", column: "recipient_id"
   add_foreign_key "blood_donations", "users", column: "donor_id"
   add_foreign_key "blood_donations", "users", column: "recipient_id"
-  add_foreign_key "donation_queues", "users"
+  add_foreign_key "donation_queues", "users", column: "donor_id"
+  add_foreign_key "donation_queues", "users", column: "recipient_id"
   add_foreign_key "sessions", "users"
   add_foreign_key "users", "blood_types"
 end

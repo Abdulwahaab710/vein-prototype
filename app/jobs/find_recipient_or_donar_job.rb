@@ -3,8 +3,9 @@
 class FindRecipientOrDonarJob < ApplicationJob
   queue_as :default
 
-  def perform(user, f_recipient: nil, f_donor: nil)
+  def perform(user, f_recipient: nil, f_donor: nil, donor: nil, amount: 1)
     return nil if f_recipient.nil? && f_donor.nil?
+    @amount = amount
     @user = user
     find_recipient if f_recipient
     find_donor if f_donor
@@ -16,21 +17,22 @@ class FindRecipientOrDonarJob < ApplicationJob
     return RecipientWaitList.create(user: recipient) unless donors.count.positive?
     donor = donors.first
     donation_queue = add_to_queue(donor)
-    send_sms(donor.phone, donation_queue)
+    send_sms(donor, donation_queue)
   end
 
   def add_to_queue(donor)
-    DonationQueue.create(user: donor)
+    DonationQueue.create!(donor_id: donor.id, recipient_id: @user.id)
   end
 
-  def send_sms(_phone_number, donation_queue)
+  def send_sms(user, donation_queue)
     client = Twilio::REST::Client.new
     client.messages.create(
       from: ENV['TWILIO_PHONE_NUMBER'],
       # to: phone_number,
       to: '+16135013175',
-      body: 'You have matched with a recipient.'\
-      "Please visit https://veinapp.herokuapp.com/confirm/#{donation_queue.token} to confirm if you are available to donate"
+      body: "Hey #{user.name}, You have matched with a recipient."\
+      "Please visit http://127.0.0.1:3000/confirm/#{donation_queue.token} to confirm"\
+      'if you are available to donate'
     )
   end
 
@@ -41,12 +43,14 @@ class FindRecipientOrDonarJob < ApplicationJob
   end
 
   def find_donor
-    send_sms_or_add_to_waitlist('+16135013175')
+    @amount.to_i.times do
+      send_sms_or_add_to_waitlist('+16135013175')
+    end
   end
 
   def donors
     User.where(city: @user.city, country: @user.country, is_donor: true).where(
       blood_type_id: @user.blood_type.can_receive_from
-    )
+    ).where.not(id: DonationQueue.pluck(:donor_id))
   end
 end

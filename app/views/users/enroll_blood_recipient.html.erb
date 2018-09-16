@@ -9,10 +9,10 @@
         <%= render 'shared/error_messages', obj: @blood_donation_request %>
 
         <%= f.label :amount %>
-        <%= f.number_field :amount, class: 'form-control', required: true %>
+        <%= f.number_field :amount, class: 'form-control', placeholder: 'Number of pints', required: true %>
         <p>Note that a pint is 450 ml</p>
 
-        <%= f.submit "Create my account", class: "btn btn-danger" %>
+        <%= f.submit "Submit", class: "btn btn-danger" %>
       <% end %>
   </div>
 </div>
