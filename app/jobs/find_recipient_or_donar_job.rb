@@ -29,8 +29,8 @@ class FindRecipientOrDonarJob < ApplicationJob
     client.messages.create(
       from: ENV['TWILIO_PHONE_NUMBER'],
       # to: phone_number,
-      to: '+16135013175',
-      body: "Hey #{user.name}, You have matched with a recipient."\
+      to: user.phone,
+      body: "Hey #{user.name}, You have been matched with a recipient."\
       "Please visit http://127.0.0.1:3000/confirm/#{donation_queue.token} to confirm"\
       'if you are available to donate'
     )
@@ -44,7 +44,7 @@ class FindRecipientOrDonarJob < ApplicationJob
 
   def find_donor
     @amount.to_i.times do
-      send_sms_or_add_to_waitlist('+16135013175')
+      send_sms_or_add_to_waitlist(@user.phone)
     end
   end
 
