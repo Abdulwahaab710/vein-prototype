@@ -28,10 +28,9 @@ class FindRecipientOrDonarJob < ApplicationJob
     client = Twilio::REST::Client.new
     client.messages.create(
       from: ENV['TWILIO_PHONE_NUMBER'],
-      # to: phone_number,
       to: user.phone,
       body: "Hey #{user.name}, You have been matched with a recipient."\
-      "Please visit http://127.0.0.1:3000/confirm/#{donation_queue.token} to confirm"\
+      "Please visit #{confirm_donation_url(donation_queue.token)} to confirm"\
       'if you are available to donate'
     )
   end
@@ -52,5 +51,9 @@ class FindRecipientOrDonarJob < ApplicationJob
     User.where(city: @user.city, country: @user.country, is_donor: true).where(
       blood_type_id: @user.blood_type.can_receive_from
     ).where.not(id: DonationQueue.pluck(:donor_id))
+  end
+
+  def confirm_donation_url(token)
+    Rails.application.routes.url_helpers.confirm_donation_url(token)
   end
 end

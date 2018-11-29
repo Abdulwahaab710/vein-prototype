@@ -85,16 +85,16 @@ end
 def generate_fake_data
   100.times do
     rand_boolean = [true, false].sample
-    User.create(
+    User.create!(
       name: Faker::Name.unique.name,
-      phone: Faker::PhoneNumber.phone_number,
+      phone: Faker::PhoneNumber.cell_phone,
       password: 'password',
       password_confirmation: 'password',
       address: Faker::Address.street_address,
       city: Faker::Address.city,
       country: Faker::Address.country,
       blood_type: blood_types.sample,
-      is_donar: rand_boolean,
+      is_donor: rand_boolean,
       is_recipient: !rand_boolean
     )
   end

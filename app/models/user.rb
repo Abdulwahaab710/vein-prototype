@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
+  before_validation(on: [:create, :update]) { self.phone = phone.delete('_.()+-') if phone.present? }
   before_save { email.downcase! if email.present? }
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
-  validates :name, :address, :city, :country, :blood_type, presence: true, on: :update
+  VALID_PHONE_NUMBER_REGEX = /\A(\d+)\z/i
+
+  validates :name, :address, :city, :country, :blood_type, presence: true, on: :update,
+    unless: :confirmed_changed?
   validates :phone,
-            format: { with: /\A(\d+)\z/i },
+            format: { with: VALID_PHONE_NUMBER_REGEX },
             presence: true,
             uniqueness: true,
             unless: ->(user) { user.email.present? }
@@ -30,6 +34,13 @@ class User < ApplicationRecord
 
   has_secure_password
   belongs_to :blood_type, optional: true
+  has_many :blood_donation_requests
+
+  include Tokenable
+
+  def confirmed?
+    confirmed == true
+  end
 
   private
 

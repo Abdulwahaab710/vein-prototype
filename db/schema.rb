@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_16_131507) do
+ActiveRecord::Schema.define(version: 2018_11_29_153508) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(version: 2018_09_16_131507) do
     t.datetime "updated_at", null: false
     t.bigint "donor_id"
     t.bigint "recipient_id"
+    t.boolean "fulfilled"
     t.index ["donor_id"], name: "index_blood_donation_requests_on_donor_id"
     t.index ["recipient_id"], name: "index_blood_donation_requests_on_recipient_id"
     t.index ["user_id"], name: "index_blood_donation_requests_on_user_id"
@@ -41,6 +42,7 @@ ActiveRecord::Schema.define(version: 2018_09_16_131507) do
     t.bigint "recipient_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "notified"
     t.index ["donor_id"], name: "index_blood_donations_on_donor_id"
     t.index ["recipient_id"], name: "index_blood_donations_on_recipient_id"
   end
@@ -59,6 +61,15 @@ ActiveRecord::Schema.define(version: 2018_09_16_131507) do
     t.bigint "recipient_id"
     t.index ["donor_id"], name: "index_donation_queues_on_donor_id"
     t.index ["recipient_id"], name: "index_donation_queues_on_recipient_id"
+  end
+
+  create_table "recipient_wait_lists", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "blood_type_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["blood_type_id"], name: "index_recipient_wait_lists_on_blood_type_id"
+    t.index ["user_id"], name: "index_recipient_wait_lists_on_user_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -83,6 +94,8 @@ ActiveRecord::Schema.define(version: 2018_09_16_131507) do
     t.datetime "updated_at", null: false
     t.boolean "is_donor", default: false
     t.boolean "is_recipient", default: false
+    t.integer "confirm_token"
+    t.boolean "confirmed"
     t.index ["blood_type_id"], name: "index_users_on_blood_type_id"
   end
 
@@ -95,6 +108,8 @@ ActiveRecord::Schema.define(version: 2018_09_16_131507) do
   add_foreign_key "blood_donations", "users", column: "recipient_id"
   add_foreign_key "donation_queues", "users", column: "donor_id"
   add_foreign_key "donation_queues", "users", column: "recipient_id"
+  add_foreign_key "recipient_wait_lists", "blood_types"
+  add_foreign_key "recipient_wait_lists", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "users", "blood_types"
 end

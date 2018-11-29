@@ -3,7 +3,7 @@
 require 'sidekiq/web'
 
 Rails.application.routes.draw do
-  mount Sidekiq::Web => '/sidekiq'
+  mount Sidekiq::Web => '/sidekiq' if Rails.env.development?
   root to: 'users#status'
 
   get '/signup', to: 'users#new', as: :signup
@@ -15,6 +15,9 @@ Rails.application.routes.draw do
 
   get '/user/update', to: 'users#complete_profile', as: :complete_profile
   patch '/user/update', to: 'users#update'
+
+  get '/confirm-number', to: 'users#confirm_number_new', as: :confirm_user_number
+  post '/confirm-number', to: 'users#confirm_number'
 
   patch '/user/opt-in/donor', to: 'users#register_as_a_donar', as: :donor_opt_in
   get '/user/recipient', to: 'users#enroll_blood_recipient', as: :enroll_blood_recipient

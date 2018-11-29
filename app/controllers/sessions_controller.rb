@@ -3,6 +3,7 @@
 # Session controller
 class SessionsController < ApplicationController
   skip_before_action :user_logged_in?, only: %i[new create]
+  skip_before_action :user_confirmed?, only: %i[new create destroy]
   include Sessions
 
   def new
