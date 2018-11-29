@@ -9,8 +9,9 @@ class DonationQueuesController < ApplicationController
 
   def available_status
     blood_donation_request = DonationQueue.find_by!(token: params[:token])
-    BloodDonation.create(donor_id: blood_donation_request.donor_id, recipient_id: blood_donation_request.recipient_id)
+    BloodDonation.create!(donor_id: blood_donation_request.donor_id, recipient_id: blood_donation_request.recipient_id)
     blood_donation_request.destroy
+    CheckDonationRequestJob.perform_later(blood_donation_request.recipient_id)
   end
 
   def unavailable_status
@@ -18,5 +19,6 @@ class DonationQueuesController < ApplicationController
     FindRecipientOrDonarJob.perform_later(
       User.find(blood_donation_request.recipient_id), f_donor: true, donor: blood_donation_request
     )
+    blood_donation_request.destroy
   end
 end

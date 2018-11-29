@@ -35,30 +35,11 @@ services:
     tty: true
   sidekiq:
     build: .
-    command: bundle exec sidekiq
+    command: bundle exec sidekiq -C config/sidekiq.yml
     depends_on:
+      - redis
       - db
-      - redis
     volumes:
       - .:/usr/src/app
     env_file:
       - .env
-  cable:
-    depends_on:
-      - redis
-    build: .
-    command: puma -p 28080 cable/config.ru
-    ports:
-      - "28080:28080"
-    volumes:
-      - .:/usr/src/app
-    env_file:
-      - .env
-  nginx:
-    image: nginx
-    links:
-      - web
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-    ports:
-      - "4000:80"
