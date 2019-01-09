@@ -109,7 +109,7 @@ GEM
     pg (1.1.3)
     puma (3.12.0)
     rack (2.0.6)
-    rack-protection (2.0.4)
+    rack-protection (2.0.5)
       rack
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -174,8 +174,9 @@ GEM
     sassc (2.0.0)
       ffi (~> 1.9.6)
       rake
-    sidekiq (5.2.3)
+    sidekiq (5.2.5)
       connection_pool (~> 2.2, >= 2.2.2)
+      rack (>= 1.5.0)
       rack-protection (>= 1.5.0)
       redis (>= 3.3.5, < 5)
     spring (2.0.2)
